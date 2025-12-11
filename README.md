@@ -460,6 +460,90 @@
     <div class="actions">
       <button id="checkBtn">ตรวจคำตอบทั้งหมด</button>
     </div>
+
+    <!-- Feedback + Google Form -->
+    <div class="feedback-box">
+      <div class="feedback-title">แบบประเมินแบบทดสอบ & ส่งเข้า Google Form / Sheet</div>
+      <div class="feedback-sub">
+        หลังจากตรวจคำตอบแล้ว ให้ให้คะแนนแบบทดสอบนี้ และเขียนข้อเสนอแนะ ระบบจะส่งข้อมูลไปยัง Google Form ที่คุณตั้งค่าไว้
+      </div>
+      <div class="rating-row">
+        ความพอใจต่อแบบทดสอบ (1 = น้อยมาก, 5 = ดีมาก):<br/>
+        <label><input type="radio" name="rating" value="1"> 1</label>
+        <label><input type="radio" name="rating" value="2"> 2</label>
+        <label><input type="radio" name="rating" value="3"> 3</label>
+        <label><input type="radio" name="rating" value="4"> 4</label>
+        <label><input type="radio" name="rating" value="5"> 5</label>
+      </div>
+      <div>
+        ข้อเสนอแนะเพิ่มเติม / สิ่งที่อยากให้ปรับปรุง:<br/>
+        <textarea id="feedbackText" class="feedback-textarea" placeholder="เช่น อยากให้มีข้อสอบฟังเพิ่ม, อยากให้มีระดับ HSK3 เพิ่ม, อยากให้มี timer ฯลฯ"></textarea>
+      </div>
+      <div class="feedback-actions">
+        <button id="feedbackBtn" type="button">ส่งข้อมูลไปที่ Google Form</button>
+        <div id="feedbackMsg" class="feedback-msg">กำลังส่งข้อมูลไปยัง Google Form…</div>
+        <div id="feedbackError" class="feedback-error">กรุณาใส่ URL Google Form และชื่อช่อง (entry.xxx) ให้ถูกต้องในโค้ดก่อนใช้งาน</div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Tip: เปิดไฟล์นี้ใน Editor แล้วใส่ URL Google Form + entry.xxx ให้ตรงกับฟอร์มของคุณ ข้อมูลจะถูกบันทึกลง Google Sheet อัตโนมัติ
+    </div>
+  </div>
+
+  <!-- ฟอร์มซ่อนสำหรับส่งไป Google Form -->
+  <!-- TODO: แก้ action เป็น URL formResponse ของ Google Form ของคุณ
+       และแก้ name="entry.xxxxx" ให้ตรงกับแต่ละข้อในฟอร์ม -->
+  <form id="gform" action="https://docs.google.com/forms/d/YOUR_GOOGLE_FORM_ID/formResponse" method="POST" target="hidden_iframe" style="display:none;">
+    <!-- ช่องสำหรับเก็บ "คะแนนแบบทดสอบ" -->
+    <input type="hidden" name="entry.1111111111" id="entryScore">
+    <!-- ช่องสำหรับเก็บ "ความพอใจ (1-5)" -->
+    <input type="hidden" name="entry.2222222222" id="entryRating">
+    <!-- ช่องสำหรับเก็บ "ข้อเสนอแนะ / รีวิว" -->
+    <input type="hidden" name="entry.3333333333" id="entryReview">
+  </form>
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+  <script>
+    const checkBtn = document.getElementById('checkBtn');
+    const scoreBox = document.getElementById('scoreBox');
+
+    let lastScoreText = "";
+
+    checkBtn.addEventListener('click', () => {
+      const questions = document.querySelectorAll('.question');
+      let correctCount = 0;
+      let total = questions.length;
+
+      questions.forEach(q => {
+        const qNum = q.getAttribute('data-question');
+        const answer = q.getAttribute('data-answer');
+        const selected = document.querySelector('input[name="q' + qNum + '"]:checked');
+        const explanation = q.querySelector('.explanation');
+
+        q.classList.remove('correct', 'incorrect');
+
+        if (selected) {
+          if (selected.value === answer) {
+            correctCount++;
+            q.classList.add('correct');
+          } else {
+            q.classList.add('incorrect');
+          }
+        } else {
+          q.classList.add('incorrect');
+        }
+
+        if (explanation) {
+          explanation.style.display = 'block';
+        }
+      });
+
+      lastScoreText = 'ได้คะแนน ' + correctCount + ' / ' + total;
+      scoreBox.style.display = 'block';
+      scoreBox.innerHTML = 'คุณได้คะแนน <span>' + correctCount + ' / ' + total + '</span>';
+    });
+
     <<!-- ปุ่มไปทำแบบประเมิน Google Form -->
 <div style="margin-top: 20px;">
     <button onclick="window.open('https://forms.gle/88a8CwCdxiMrykMy8', '_blank')" 
