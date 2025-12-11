@@ -251,7 +251,7 @@
   <div class="container">
     <h1>《糖和大脑》HSK4 阅读测验</h1>
     <div class="subtitle">
-      อ่านบทความภาษาจีน → ตอบคำถาม 10 ข้อ → กดตรวจคำตอบ → ดูเฉลย และส่งคะแนน+รีวิวเข้า Google Form / Google Sheet ได้
+      อ่านบทความภาษาจีน → ตอบคำถาม 10 ข้อ → กดตรวจคำตอบ → ดูเฉลย และส่งคะแนน+รีวิวเข้า Google Form ได้
     </div>
 
     <div class="article-box">
